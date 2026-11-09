@@ -7,6 +7,7 @@ from kospel_cmi.controller.device import EkcoM3
 from kospel_cmi.controller.ppe4 import Ppe4
 from kospel_cmi.exceptions import (
     IncompleteRegisterRefreshError,
+    KospelConnectionError,
     RegisterMissingError,
 )
 from kospel_cmi.registers.enums import HeatingStatus
@@ -46,6 +47,15 @@ class PartialModbusBackend(MockModbusBackend):
             for addr in range(start_register, start_register + count)
             if addr in self.registers
         }
+
+
+class OptionalBlocksFailingBackend(MockModbusBackend):
+    """Refuses the optional status/volume blocks like a firmware without them."""
+
+    async def read_registers(self, start_register: int, count: int) -> dict[int, int]:
+        if start_register in (1129, 1162):
+            raise KospelConnectionError("firmware refused optional block")
+        return await super().read_registers(start_register, count)
 
 
 SAMPLE_PPE4_REGISTERS: dict[int, int] = {
@@ -203,3 +213,112 @@ class TestPpe4Setters:
         with pytest.raises(ValueError):
             controller.get_profile_temperature(4)
 
+
+
+class TestPpe4LowFlowAndDrawVolume:
+    """Insufficient flow flag, draw volume counters and derived real flow."""
+
+    def test_insufficient_flow_flag_bit(self) -> None:
+        controller = Ppe4(MockModbusBackend())
+        controller.from_registers({**SAMPLE_PPE4_REGISTERS, 1129: 0x11})
+        assert controller.status_flags == 0x11
+        assert controller.insufficient_flow is False
+
+        controller.from_registers({**SAMPLE_PPE4_REGISTERS, 1129: 0x13})
+        assert controller.status_flags == 0x13
+        assert controller.insufficient_flow is True
+
+    def test_optional_registers_absent_or_unused_return_none(self) -> None:
+        controller = Ppe4(MockModbusBackend())
+        controller.from_registers(dict(SAMPLE_PPE4_REGISTERS))
+        assert controller.status_flags is None
+        assert controller.insufficient_flow is None
+        assert controller.draw_volume_ml is None
+        assert controller.last_draw_volume_liters is None
+        assert controller.measured_flow is None
+
+        controller.from_registers({**SAMPLE_PPE4_REGISTERS, 1129: 0xFFFF})
+        assert controller.insufficient_flow is None
+
+    def test_draw_volumes_combine_low_and_high_words(self) -> None:
+        controller = Ppe4(MockModbusBackend())
+        controller.from_registers(
+            {
+                **SAMPLE_PPE4_REGISTERS,
+                1162: 4464,
+                1163: 1,  # 65536 + 4464 = 70000 ml
+                1164: 8866,
+                1165: 0,
+            }
+        )
+        assert controller.draw_volume_ml == 70000
+        assert controller.last_draw_volume_liters == pytest.approx(8.866)
+
+    def test_missing_high_word_counts_as_zero(self) -> None:
+        controller = Ppe4(MockModbusBackend())
+        controller.from_registers({**SAMPLE_PPE4_REGISTERS, 1162: 1200, 1164: 500})
+        assert controller.draw_volume_ml == 1200
+        assert controller.last_draw_volume_liters == pytest.approx(0.5)
+
+    @pytest.mark.asyncio
+    async def test_refresh_reads_optional_registers(self) -> None:
+        backend = MockModbusBackend(
+            {**SAMPLE_PPE4_REGISTERS, 1129: 0x13, 1162: 1200, 1164: 8866}
+        )
+        controller = Ppe4(backend=backend, strict_refresh=True)
+        await controller.refresh()
+
+        assert controller.insufficient_flow is True
+        assert controller.draw_volume_ml == 1200
+        assert controller.last_draw_volume_liters == pytest.approx(8.866)
+
+    @pytest.mark.asyncio
+    async def test_refresh_survives_optional_block_failure(self) -> None:
+        backend = OptionalBlocksFailingBackend(SAMPLE_PPE4_REGISTERS)
+        controller = Ppe4(backend=backend, strict_refresh=True)
+        await controller.refresh()
+
+        assert controller.flow == pytest.approx(5.4)
+        assert controller.insufficient_flow is None
+        assert controller.draw_volume_ml is None
+        assert controller.measured_flow is None
+
+    @pytest.mark.asyncio
+    async def test_measured_flow_from_volume_counter(self) -> None:
+        backend = MockModbusBackend(SAMPLE_PPE4_REGISTERS)
+        controller = Ppe4(backend=backend)
+        times = iter([0.0, 15.0, 30.0, 45.0, 60.0])
+        controller._clock = lambda: next(times)
+
+        backend.registers[1162] = 0
+        await controller.refresh()
+        assert controller.measured_flow == 0.0  # idle on the first sample
+
+        backend.registers[1162] = 300
+        await controller.refresh()
+        assert controller.measured_flow == pytest.approx(1.2)  # 300 ml / 15 s
+
+        await controller.refresh()
+        assert controller.measured_flow == 0.0  # counter did not move
+
+        backend.registers[1162] = 0
+        await controller.refresh()
+        assert controller.measured_flow == 0.0  # draw ended, counter reset
+
+        backend.registers[1162] = 150
+        await controller.refresh()
+        assert controller.measured_flow == pytest.approx(0.6)  # new draw started
+
+    @pytest.mark.asyncio
+    async def test_measured_flow_unknown_on_first_sample_during_draw(self) -> None:
+        backend = MockModbusBackend({**SAMPLE_PPE4_REGISTERS, 1162: 5000})
+        controller = Ppe4(backend=backend)
+        times = iter([0.0, 15.0])
+        controller._clock = lambda: next(times)
+
+        await controller.refresh()
+        assert controller.measured_flow is None
+
+        backend.registers[1162] = 5300
+        await controller.refresh()
+        assert controller.measured_flow == pytest.approx(1.2)

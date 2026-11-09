@@ -3,10 +3,12 @@ Device controller for Kospel PPE.4 instantaneous water heater (MODBUS-over-HTTP)
 """
 
 import logging
+import time
 from typing import Any, ClassVar, Optional
 
 from ..exceptions import (
     IncompleteRegisterRefreshError,
+    KospelConnectionError,
     RegisterMissingError,
 )
 from ..kospel.backend import ModbusBackend
@@ -15,6 +17,7 @@ from ..registers.enums import HeatingStatus
 logger = logging.getLogger(__name__)
 
 # Register addresses (confirmed on PPE.4)
+REG_STATUS_FLAGS = 1129  # observed on PPE.4; bit 0x02 = insufficient flow
 REG_TEMP_INLET = 1134
 REG_TEMP_OUTLET = 1135
 REG_TEMP_INTERNAL = 1136
@@ -23,6 +26,16 @@ REG_FLOW = 1139
 REG_TARGET_TEMP = 1140
 REG_INSTALLED_POWER_W = 1143
 REG_BOILER_MAX_POWER_W = 1144
+# Volume counters in ml. Observed on PPE.4 with a 6.5 min draw at ~1.2 L/min:
+# 1162 counts up from 0 while water flows, including while the heater is
+# below its minimum flow and reports flow (1139) as 0. When the draw ends it
+# resets to 0 and 1164 keeps the finished draw's total. The high words
+# (1163, 1165) are assumed by analogy with the other 32-bit counters; they
+# were always 0 in the captured data.
+REG_DRAW_VOLUME_LO = 1162
+REG_DRAW_VOLUME_HI = 1163
+REG_LAST_DRAW_VOLUME_LO = 1164
+REG_LAST_DRAW_VOLUME_HI = 1165
 REG_SERIAL_SUFFIX = 1276
 REG_MAX_TEMP = 1388
 REG_ACTIVE_PROFILE = 1390
@@ -40,6 +53,20 @@ _POLL_BLOCKS: tuple[tuple[int, int], ...] = (
     (1448, 4),   # Daily energy counter block (must start at 1448)
     (1576, 4),   # Daily water counter block (must start at 1576)
 )
+
+# Optional blocks are read after the required ones. If the firmware refuses
+# them, the rest of the device keeps working and the dependent properties
+# return None.
+_OPTIONAL_POLL_BLOCKS: tuple[tuple[int, int], ...] = (
+    (REG_STATUS_FLAGS, 1),  # Status flag word
+    (REG_DRAW_VOLUME_LO, 4),  # Current and last draw volume (32-bit pairs)
+)
+
+# Bit in REG_STATUS_FLAGS set while the heater is not heating because the water
+# flow is below its minimum (the LCD shows "insufficient flow"). Idle word is
+# 0x11; it became 0x13 when heating stopped at ~1.2 L/min and returned to 0x11
+# when the draw ended.
+FLAG_INSUFFICIENT_FLOW = 0x0002
 
 _PPE4_REQUIRED_REGISTERS: frozenset[int] = frozenset(
     {
@@ -82,6 +109,11 @@ class Ppe4:
         self._backend = backend
         self._strict_refresh = strict_refresh
         self._registers: dict[int, int] = {}
+        self._optional_blocks_warned = False
+        self._clock = time.monotonic
+        # (monotonic time, draw volume in ml) from the previous refresh
+        self._volume_sample: Optional[tuple[float, int]] = None
+        self._measured_flow: Optional[float] = None
 
     @property
     def water_heater_writable(self) -> bool:
@@ -125,12 +157,42 @@ class Ppe4:
             return None
         return (hi << 16) | lo
 
+    def _decode_optional_u32(self, reg_lo: int, reg_hi: int) -> Optional[int]:
+        """Decode a 32-bit pair from optional registers; None if the low word is absent.
+
+        A missing or unused high word counts as 0 so that a firmware that only
+        exposes the low word still works.
+        """
+        lo = self._registers.get(reg_lo)
+        if lo is None or lo in _UNUSED_MARKERS:
+            return None
+        hi = self._registers.get(reg_hi, 0)
+        if hi in _UNUSED_MARKERS:
+            hi = 0
+        return (hi << 16) | lo
+
     async def refresh(self) -> None:
         """Read all PPE.4 register blocks from the backend."""
         logger.info("Refreshing PPE.4 settings from backend")
         merged: dict[int, int] = {}
         for start, count in _POLL_BLOCKS:
             block = await self._backend.read_registers(start, count)
+            merged.update(block)
+
+        for start, count in _OPTIONAL_POLL_BLOCKS:
+            try:
+                block = await self._backend.read_registers(start, count)
+            except KospelConnectionError as err:
+                if not self._optional_blocks_warned:
+                    self._optional_blocks_warned = True
+                    logger.warning(
+                        "PPE.4 optional registers %s..%s unavailable, "
+                        "continuing without them: %s",
+                        start,
+                        start + count - 1,
+                        err,
+                    )
+                continue
             merged.update(block)
 
         if self._strict_refresh:
@@ -142,7 +204,30 @@ class Ppe4:
                     missing_registers=missing_strs
                 )
         self._registers = merged
+        self._update_measured_flow(self._clock())
         logger.info("PPE.4 settings refreshed successfully")
+
+    def _update_measured_flow(self, now: float) -> None:
+        """Derive the real flow from the change of the draw volume counter.
+
+        The result is the average flow since the previous refresh. A counter
+        that went down means the draw ended (value 0) or a new one started
+        since the previous refresh, so the new value is the volume since then.
+        """
+        volume = self.draw_volume_ml
+        previous = self._volume_sample
+        self._measured_flow = None
+        if volume is None:
+            self._volume_sample = None
+            return
+        if previous is not None:
+            elapsed = now - previous[0]
+            if elapsed > 0:
+                delta_ml = volume - previous[1] if volume >= previous[1] else volume
+                self._measured_flow = round(delta_ml / elapsed * 60.0 / 1000.0, 2)
+        elif volume == 0:
+            self._measured_flow = 0.0
+        self._volume_sample = (now, volume)
 
     def from_registers(self, registers: dict[int, int]) -> None:
         """Load pre-fetched integer register data."""
@@ -202,6 +287,45 @@ class Ppe4:
     def flow(self) -> Optional[float]:
         """Water flow rate (1139), L/min."""
         return self._decode_deci(REG_FLOW)
+
+    @property
+    def measured_flow(self) -> Optional[float]:
+        """Actual water flow (L/min) derived from the draw volume counter.
+
+        Unlike :attr:`flow`, this keeps reporting while the heater is below its
+        minimum flow and has stopped heating. It is the average over the time
+        between the last two refreshes, so it is None until the second refresh.
+        """
+        return self._measured_flow
+
+    @property
+    def status_flags(self) -> Optional[int]:
+        """Raw status flag word (1129), or None when unavailable."""
+        raw = self._registers.get(REG_STATUS_FLAGS)
+        if raw is None or raw in _UNUSED_MARKERS:
+            return None
+        return raw
+
+    @property
+    def insufficient_flow(self) -> Optional[bool]:
+        """True while the heater is not heating because the flow is too low."""
+        flags = self.status_flags
+        if flags is None:
+            return None
+        return bool(flags & FLAG_INSUFFICIENT_FLOW)
+
+    @property
+    def draw_volume_ml(self) -> Optional[int]:
+        """Volume of the draw in progress (1162..1163), ml; 0 when idle."""
+        return self._decode_optional_u32(REG_DRAW_VOLUME_LO, REG_DRAW_VOLUME_HI)
+
+    @property
+    def last_draw_volume_liters(self) -> Optional[float]:
+        """Total volume of the last finished draw (1164..1165), L."""
+        ml = self._decode_optional_u32(
+            REG_LAST_DRAW_VOLUME_LO, REG_LAST_DRAW_VOLUME_HI
+        )
+        return None if ml is None else ml / 1000.0
 
     @property
     def target_temperature(self) -> Optional[float]:

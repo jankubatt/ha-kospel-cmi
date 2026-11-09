@@ -209,6 +209,9 @@
     "binary_sensor": {
       "connectivity": {
         "name": "Connectivity"
+      },
+      "insufficient_flow": {
+        "name": "Insufficient flow"
       }
     },
     "sensor": {
@@ -244,6 +247,9 @@
       },
       "flow": {
         "name": "Flow rate"
+      },
+      "flow_measured": {
+        "name": "Actual flow rate"
       },
       "power": {
         "name": "Instant power"
@@ -291,6 +297,9 @@
       },
       "water_today": {
         "name": "Water today"
+      },
+      "last_draw_volume": {
+        "name": "Last draw volume"
       }
     },
     "number": {
