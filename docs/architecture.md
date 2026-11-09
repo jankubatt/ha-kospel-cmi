@@ -4,7 +4,7 @@ System architecture for the Kospel Heater Home Assistant integration.
 
 ```mermaid
 graph TB
-    subgraph Integration["custom_components/kospel (this repo)"]
+    subgraph Integration["custom_components/kospel_ppe4_custom (this repo)"]
         ConfigFlow[config_flow.py]
         Coordinator[coordinator.py]
         Const[const.py]

@@ -28,9 +28,9 @@ The integration uses **kospel-cmi-lib** for heater communication. Imports use ab
 
 ```python
 # Correct: Absolute imports from kospel-cmi-lib (installed via manifest requirements)
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
-from kospel_cmi.registers.enums import HeaterMode
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.registers.enums import HeaterMode
 
 # Device controller: backend only; strict_refresh ensures full register batch (see library)
 controller = EkcoM3(backend=..., strict_refresh=True)
@@ -40,12 +40,12 @@ from .const import DOMAIN
 from .coordinator import KospelDataUpdateCoordinator
 ```
 
-kospel-cmi-lib is installed by Home Assistant when loading the integration (via `manifest.json` requirements). Integration modules within `custom_components/kospel/` use relative imports (`.`) for each other.
+kospel-cmi-lib is installed by Home Assistant when loading the integration (via `manifest.json` requirements). Integration modules within `custom_components/kospel_ppe4_custom/` use relative imports (`.`) for each other.
 
 ### Integration Structure
 
 ```
-custom_components/kospel/
+custom_components/kospel_ppe4_custom/
 ├── __init__.py          # Integration entry point
 ├── manifest.json        # requirements: aiohttp, kospel-cmi-lib
 ├── brand/               # Local brand images (Home Assistant 2026.3+)
@@ -67,7 +67,7 @@ custom_components/kospel/
 ### Backend Types
 
 - **HTTP**: Connects to a real heater. Requires heater IP and device ID.
-- **YAML**: File-based backend for development. State stored at `custom_components/kospel/data/state.yaml`.
+- **YAML**: File-based backend for development. State stored at `custom_components/kospel_ppe4_custom/data/state.yaml`.
 
 ## Testing
 

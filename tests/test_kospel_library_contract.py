@@ -3,7 +3,7 @@
 import math
 from datetime import timedelta
 
-from kospel_cmi.controller.device import EkcoM3
+from kospel_cmi_custom.controller.device import EkcoM3
 
 
 def test_ekco_m3_required_registers_nonempty() -> None:

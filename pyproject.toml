@@ -8,7 +8,7 @@ license-files = ["LICENSE*"]
 requires-python = ">=3.11"
 dependencies = [
     "aiohttp>=3.9.0",
-    "kospel-cmi-lib>=1.1.6,<3.0.0",
+    "kospel-cmi-lib-custom>=1.1.6,<3.0.0",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -30,7 +30,7 @@ urls = { Repository = "https://github.com/JanKrl/ha-kospel-cmi" }
 members = ["lib"]
 
 [tool.uv.sources]
-kospel-cmi-lib = { workspace = true }
+kospel-cmi-lib-custom = { workspace = true }
 
 
 [dependency-groups]

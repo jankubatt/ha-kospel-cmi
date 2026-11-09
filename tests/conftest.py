@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock
 
 import aiohttp
 
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
 
 
 @pytest.fixture

@@ -2,8 +2,8 @@
 
 import pytest
 
-from kospel_cmi.exceptions import RegisterValueInvalidError
-from kospel_cmi.registers.utils import (
+from kospel_cmi_custom.exceptions import RegisterValueInvalidError
+from kospel_cmi_custom.registers.utils import (
     get_bit,
     int_to_reg,
     int_to_reg_address,

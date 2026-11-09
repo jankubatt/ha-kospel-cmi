@@ -2,8 +2,8 @@
 
 import pytest
 
-from kospel_cmi.registers.decoders import decode_heater_mode
-from kospel_cmi.registers.encoders import (
+from kospel_cmi_custom.registers.decoders import decode_heater_mode
+from kospel_cmi_custom.registers.encoders import (
     encode_bit_boolean,
     encode_heater_mode,
     encode_map,
@@ -11,8 +11,8 @@ from kospel_cmi.registers.encoders import (
     encode_scaled_x10,
     encode_scaled_x100,
 )
-from kospel_cmi.registers.enums import HeaterMode, WaterHeaterEnabled
-from kospel_cmi.registers.utils import get_bit, reg_to_int
+from kospel_cmi_custom.registers.enums import HeaterMode, WaterHeaterEnabled
+from kospel_cmi_custom.registers.utils import get_bit, reg_to_int
 
 
 class TestEncodeHeaterMode:

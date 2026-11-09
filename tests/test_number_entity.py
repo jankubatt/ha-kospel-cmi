@@ -82,7 +82,7 @@ sys.modules["homeassistant.helpers.update_coordinator"].CoordinatorEntity = (
     _CoordinatorEntityBase
 )
 
-from custom_components.kospel.number import (  # noqa: E402
+from custom_components.kospel_ppe4_custom.number import (  # noqa: E402
     DHW_PRESET_TEMP_MAX,
     DHW_PRESET_TEMP_MIN,
     PRESET_TEMP_STEP,
@@ -224,7 +224,7 @@ class TestKospelPresetNumberEntity:
         )
 
         with patch(
-            "custom_components.kospel.number.asyncio.sleep", new_callable=AsyncMock
+            "custom_components.kospel_ppe4_custom.number.asyncio.sleep", new_callable=AsyncMock
         ):
             await entity.async_set_native_value(21.5)
 
@@ -276,7 +276,7 @@ class TestKospelPresetNumberEntity:
         )
 
         with patch(
-            "custom_components.kospel.number.asyncio.sleep", new_callable=AsyncMock
+            "custom_components.kospel_ppe4_custom.number.asyncio.sleep", new_callable=AsyncMock
         ):
             await entity.async_set_native_value(22.0)
 
@@ -306,7 +306,7 @@ class TestProfileNumberEntity:
         mock_controller.get_profile_temperature.assert_called_once_with(2)
 
         with patch(
-            "custom_components.kospel.number.asyncio.sleep", new_callable=AsyncMock
+            "custom_components.kospel_ppe4_custom.number.asyncio.sleep", new_callable=AsyncMock
         ):
             await entity.async_set_native_value(45.0)
 

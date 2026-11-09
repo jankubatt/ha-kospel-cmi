@@ -66,7 +66,7 @@ Optionally fetch per-device info:
 
 ```python
 import aiohttp
-from kospel_cmi import probe_device, discover_devices
+from kospel_cmi_custom import probe_device, discover_devices
 
 async with aiohttp.ClientSession() as session:
     info = await probe_device(session, "192.168.101.49")

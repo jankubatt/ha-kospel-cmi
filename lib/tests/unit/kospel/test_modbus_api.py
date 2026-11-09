@@ -5,11 +5,11 @@ import aioresponses
 import pytest
 from yarl import URL
 
-from kospel_cmi.exceptions import (
+from kospel_cmi_custom.exceptions import (
     KospelConnectionError,
     KospelWriteError,
 )
-from kospel_cmi.kospel.modbus_api import (
+from kospel_cmi_custom.kospel.modbus_api import (
     read_registers,
     write_register,
     write_registers,

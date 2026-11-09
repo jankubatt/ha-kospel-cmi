@@ -6,7 +6,7 @@ import aiofiles
 import pytest
 import yaml
 
-from kospel_cmi.tools.register_scanner import (
+from kospel_cmi_custom.tools.register_scanner import (
     format_scan_result,
     scan_register_range,
     serialize_scan_result,
@@ -210,7 +210,7 @@ class TestRegisterScannerWithYamlBackend:
         self, yaml_state_with_registers: Path
     ) -> None:
         """scan_register_range works with YamlRegisterBackend."""
-        from kospel_cmi.kospel.backend import YamlRegisterBackend
+        from kospel_cmi_custom.kospel.backend import YamlRegisterBackend
 
         backend = YamlRegisterBackend(state_file=str(yaml_state_with_registers))
         result = await scan_register_range(backend, "0b00", 256)

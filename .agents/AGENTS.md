@@ -23,12 +23,12 @@ This repository is a **uv workspace monorepo** containing two packages:
 | Package | Path | Distributed via |
 |---------|------|-----------------|
 | `kospel-cmi-lib` | `lib/` | [PyPI](https://pypi.org/project/kospel-cmi-lib/) |
-| `ha-kospel-cmi` (HA integration) | root (`custom_components/kospel/`) | [HACS](https://hacs.xyz/) |
+| `ha-kospel-cmi` (HA integration) | root (`custom_components/kospel_ppe4_custom/`) | [HACS](https://hacs.xyz/) |
 
 ### Package Boundaries
 
 - **`lib/`** (`kospel-cmi-lib`): All heater communication logic — HTTP transport, register decoding/encoding, device models, simulator. Changes here affect the library PyPI package.
-- **Root** (`custom_components/kospel/`): HA integration layer only — entities, coordinator, config flow. This is a thin adapter over the library. No heater communication logic belongs here.
+- **Root** (`custom_components/kospel_ppe4_custom/`): HA integration layer only — entities, coordinator, config flow. This is a thin adapter over the library. No heater communication logic belongs here.
 - **`tests/`** (root): HA integration tests.
 - **`lib/tests/`**: Library unit tests.
 
@@ -68,7 +68,7 @@ This integration is a **thin Home Assistant layer** on top of the external [kosp
 ┌─────────────────────────────────────────────────────┐
 │  Home Assistant                                      │
 │  ┌───────────────────────────────────────────────┐  │
-│  │  custom_components/kospel/ (this repo)        │  │
+│  │  custom_components/kospel_ppe4_custom/ (this repo)        │  │
 │  │  ┌──────────┐  ┌────────────────────────────┐ │  │
 │  │  │config_flow│  │ Entities:                  │ │  │
 │  │  │          │  │  climate.py                 │ │  │
@@ -95,7 +95,7 @@ This integration is a **thin Home Assistant layer** on top of the external [kosp
 
 ## File Map
 
-### Integration Source (`custom_components/kospel/`)
+### Integration Source (`custom_components/kospel_ppe4_custom/`)
 
 | File | Purpose |
 |------|---------|
@@ -146,9 +146,9 @@ This integration is a **thin Home Assistant layer** on top of the external [kosp
 
 ```python
 # External library: absolute imports from kospel-cmi-lib
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
-from kospel_cmi.registers.enums import HeaterMode, HeatingStatus
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.registers.enums import HeaterMode, HeatingStatus
 
 # Within integration: relative imports
 from .const import DOMAIN
@@ -226,7 +226,7 @@ async def async_set_something(self, value) -> None:
 ### Setup Paths
 1. **Network scan** (`network_scan`): Scans all IPv4 subnets from enabled adapters. Max 1024 hosts per subnet.
 2. **Manual entry** (`manual`): User provides heater IP + device ID (default 65).
-3. **YAML** (`yaml`): Development mode, no heater needed. State stored in `custom_components/kospel/data/state.yaml`.
+3. **YAML** (`yaml`): Development mode, no heater needed. State stored in `custom_components/kospel_ppe4_custom/data/state.yaml`.
 
 ### Disabled: DHCP Auto-Discovery
 MAC-based auto-discovery via DHCP is **implemented but intentionally hidden** from the UI. The expected Kospel OUI prefix (`70b3d5249`) did not match on a real device. Code is preserved for future re-enabling once OUI matching is verified.
@@ -242,7 +242,7 @@ Single option: `refresh_delay_after_set` (0.5–5.0 seconds, default 1.0).
 | Type | Class | Use Case |
 |------|-------|----------|
 | HTTP | `HttpRegisterBackend` | Real heater. Requires heater IP + device ID. API URL: `http://{ip}/api/dev/{id}` |
-| YAML | `YamlRegisterBackend` | Development. State file at `custom_components/kospel/data/state.yaml` |
+| YAML | `YamlRegisterBackend` | Development. State file at `custom_components/kospel_ppe4_custom/data/state.yaml` |
 
 ## Communication & Availability
 
@@ -284,7 +284,7 @@ For the full release workflow and commit conventions, see [CONTRIBUTING.md](CONT
 
 ## Common Pitfalls
 
-1. **Don't import from `kospel_cmi` using relative paths** — it's an installed package, use absolute imports.
+1. **Don't import from `kospel_cmi_custom` using relative paths** — it's an installed package, use absolute imports.
 2. **Don't make the water heater entity writable** — the read-only design is intentional. DHW is controlled via device firmware and climate entity.
 3. **Don't forget the refresh delay** after write operations — the heater needs time to persist register changes.
 4. **Don't remove DHCP discovery code** — it's intentionally kept for future use even though it's hidden from the UI.
@@ -297,7 +297,7 @@ For the full release workflow and commit conventions, see [CONTRIBUTING.md](CONT
 11. **Subpackage paths in `release-please-config.json` are relative**: For `lib`, options like `"changelog-path"` must be `"CHANGELOG.md"` (relative to `lib/`), NOT `"lib/CHANGELOG.md"` (which causes Release Please to create `lib/lib/CHANGELOG.md`).
 12. **Monorepo Two-Phase Release Protocol**: When adding a feature touching both `lib/` and the HA integration, changes MUST be released in two phases:
     - Phase 1: Merge library PR → Merge Release PR → Wait for PyPI publish.
-    - Phase 2: Open PR updating `custom_components/kospel/manifest.json` requirements to the published PyPI version → Merge integration PR.
+    - Phase 2: Open PR updating `custom_components/kospel_ppe4_custom/manifest.json` requirements to the published PyPI version → Merge integration PR.
     *Never* point `manifest.json` on `master` to an unreleased PyPI package, as `Validate Manifest Requirements` (`hassfest`) checks against live PyPI.
 
 
@@ -305,10 +305,10 @@ For the full release workflow and commit conventions, see [CONTRIBUTING.md](CONT
 
 1. **Commit and Push Approval**: NEVER push commits to an upstream remote branch (e.g. `origin`) without explicit prior approval from the user.
 2. **Force Pushing**: NEVER use force pushes (`--force` or `-f`) without explicit prior approval from the user. When asking for approval, you MUST provide a clear and detailed explanation of exactly why a force push is necessary (e.g., rewriting history, fixing a broken rebase) and what it will overwrite.
-3. **Strict Task Separation (Monorepo)**: The `release-please` workflow relies on a clean separation between the library (`lib/`) and the HA integration (`custom_components/kospel/`). You MUST NEVER mix changes for both in a single PR, task, or commit. Always split tasks into two distinct phases/PRs if changes in both components are required.
+3. **Strict Task Separation (Monorepo)**: The `release-please` workflow relies on a clean separation between the library (`lib/`) and the HA integration (`custom_components/kospel_ppe4_custom/`). You MUST NEVER mix changes for both in a single PR, task, or commit. Always split tasks into two distinct phases/PRs if changes in both components are required.
 4. **Proactive Documentation Updates**: After making any functional changes, adding features, or modifying configuration options, you MUST automatically update the main `README.md` (and `lib/README.md` if the library changed) to accurately reflect the current state of the project. Do not wait for the user to ask you to update the documentation.
 5. **Self-Healing Local Validation**: Before proposing a PR or asking for commit approval, you MUST run tests (`uv run python -m pytest tests/ -v` and `uv run python -m pytest lib/tests/ -v`) and linting (`uv run ruff check . --fix`) locally. If they fail, fix the issues yourself. Do not rely on CI to catch basic errors.
-6. **Proactive YAML Mocking**: Whenever you add a new entity or feature, you MUST update `custom_components/kospel/data/state.yaml` with the corresponding mock data. This allows the user to immediately test UI changes in YAML development mode without connecting to a physical heater.
+6. **Proactive YAML Mocking**: Whenever you add a new entity or feature, you MUST update `custom_components/kospel_ppe4_custom/data/state.yaml` with the corresponding mock data. This allows the user to immediately test UI changes in YAML development mode without connecting to a physical heater.
 
 ## Ponytail (Lazy Senior Dev Mode)
 

@@ -2,15 +2,15 @@
 
 import pytest
 
-from kospel_cmi.controller.base import KospelController, WaterHeaterController
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.controller.ppe4 import Ppe4
-from kospel_cmi.exceptions import (
+from kospel_cmi_custom.controller.base import KospelController, WaterHeaterController
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.controller.ppe4 import Ppe4
+from kospel_cmi_custom.exceptions import (
     IncompleteRegisterRefreshError,
     KospelConnectionError,
     RegisterMissingError,
 )
-from kospel_cmi.registers.enums import HeatingStatus
+from kospel_cmi_custom.registers.enums import HeatingStatus
 
 
 class MockModbusBackend:

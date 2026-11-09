@@ -7,14 +7,14 @@ from pathlib import Path
 import pytest
 import yaml
 
-from kospel_cmi.registers.utils import int_to_reg_address, reg_address_to_int
-from kospel_cmi.tools.live_scanner import (
+from kospel_cmi_custom.registers.utils import int_to_reg_address, reg_address_to_int
+from kospel_cmi_custom.tools.live_scanner import (
     _diff_scans,
     format_changes,
     run_live_scan,
     serialize_changes,
 )
-from kospel_cmi.tools.register_scanner import scan_register_range
+from kospel_cmi_custom.tools.register_scanner import scan_register_range
 from tests.unit.tools.fixtures import MockRegisterBackend
 
 

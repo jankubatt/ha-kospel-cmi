@@ -73,11 +73,11 @@ sys.modules["homeassistant.helpers.update_coordinator"].CoordinatorEntity = (
     _CoordinatorEntityBase
 )
 
-from custom_components.kospel.binary_sensor import (
+from custom_components.kospel_ppe4_custom.binary_sensor import (
     InsufficientFlowSensor,
     async_setup_entry,
 )
-from custom_components.kospel.const import DOMAIN
+from custom_components.kospel_ppe4_custom.const import DOMAIN
 
 
 @pytest.fixture

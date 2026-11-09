@@ -22,7 +22,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from kospel_cmi.registers.enums import HeaterMode, HeatingStatus, ValvePosition
+from kospel_cmi_custom.registers.enums import HeaterMode, HeatingStatus, ValvePosition
 
 from .const import DOMAIN, get_device_identifier, get_device_info
 from .coordinator import KospelDataUpdateCoordinator
@@ -122,7 +122,7 @@ async def async_setup_entry(
         if attr_name == "heating_medium_setpoint":
             raw = getattr(c, "_registers", {}).get("0b44")
             if raw:
-                from kospel_cmi.registers.decoders import decode_scaled_x10
+                from kospel_cmi_custom.registers.decoders import decode_scaled_x10
 
                 return decode_scaled_x10(raw)
         return None

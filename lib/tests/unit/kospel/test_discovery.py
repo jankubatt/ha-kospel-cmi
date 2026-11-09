@@ -4,7 +4,7 @@ import aiohttp
 import pytest
 from aioresponses import aioresponses
 
-from kospel_cmi.kospel.discovery import (
+from kospel_cmi_custom.kospel.discovery import (
     MODEL_NAMES,
     KospelDeviceInfo,
     discover_devices,

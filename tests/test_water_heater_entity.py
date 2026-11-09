@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from kospel_cmi.registers.enums import DhwMode
+from kospel_cmi_custom.registers.enums import DhwMode
 
 
 # Mock homeassistant before importing integration modules.
@@ -67,7 +67,7 @@ sys.modules[
     "homeassistant.components.water_heater"
 ].WaterHeaterEntity = _WaterHeaterEntityBase
 
-from custom_components.kospel.water_heater import (  # noqa: E402
+from custom_components.kospel_ppe4_custom.water_heater import (  # noqa: E402
     PROFILE_OPTIONS,
     STATE_ECO,
     STATE_OFF,
@@ -127,7 +127,7 @@ class TestReadOnlyWaterHeaterBehavior:
     def test_current_operation_eco_when_dhw_mode_economy(
         self, water_heater_entity, mock_coordinator
     ) -> None:
-        from kospel_cmi.registers.enums import WaterHeaterEnabled
+        from kospel_cmi_custom.registers.enums import WaterHeaterEnabled
 
         mock_controller = MagicMock()
         mock_controller.water_heater_writable = False
@@ -140,7 +140,7 @@ class TestReadOnlyWaterHeaterBehavior:
     def test_current_operation_off_when_water_heater_disabled(
         self, water_heater_entity, mock_coordinator
     ) -> None:
-        from kospel_cmi.registers.enums import WaterHeaterEnabled
+        from kospel_cmi_custom.registers.enums import WaterHeaterEnabled
 
         mock_controller = MagicMock()
         mock_controller.water_heater_writable = False
@@ -153,7 +153,7 @@ class TestReadOnlyWaterHeaterBehavior:
     def test_current_operation_performance_when_dhw_mode_comfort(
         self, water_heater_entity, mock_coordinator
     ) -> None:
-        from kospel_cmi.registers.enums import WaterHeaterEnabled
+        from kospel_cmi_custom.registers.enums import WaterHeaterEnabled
 
         mock_controller = MagicMock()
         mock_controller.water_heater_writable = False
@@ -208,7 +208,7 @@ class TestWritableWaterHeaterBehavior:
         mock_coordinator.data = mock_controller
 
         with patch(
-            "custom_components.kospel.water_heater.asyncio.sleep",
+            "custom_components.kospel_ppe4_custom.water_heater.asyncio.sleep",
             new_callable=AsyncMock,
         ):
             await water_heater_entity.async_set_temperature(temperature=44.0)
@@ -226,7 +226,7 @@ class TestWritableWaterHeaterBehavior:
         mock_coordinator.data = mock_controller
 
         with patch(
-            "custom_components.kospel.water_heater.asyncio.sleep",
+            "custom_components.kospel_ppe4_custom.water_heater.asyncio.sleep",
             new_callable=AsyncMock,
         ):
             await water_heater_entity.async_set_operation_mode("profile_3")

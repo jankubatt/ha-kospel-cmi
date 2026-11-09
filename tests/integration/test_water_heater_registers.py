@@ -2,7 +2,7 @@
 
 import pytest
 
-from kospel_cmi.controller.device import EkcoM3
+from kospel_cmi_custom.controller.device import EkcoM3
 
 
 class TestWaterHeaterRegisters:

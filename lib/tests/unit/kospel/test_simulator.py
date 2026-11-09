@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from kospel_cmi.kospel import simulator
+from kospel_cmi_custom.kospel import simulator
 
 
 class TestSimulatorModule:

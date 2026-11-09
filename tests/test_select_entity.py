@@ -62,7 +62,7 @@ sys.modules["homeassistant.helpers.update_coordinator"].CoordinatorEntity = (
     _CoordinatorEntityBase
 )
 
-from custom_components.kospel.select import (  # noqa: E402
+from custom_components.kospel_ppe4_custom.select import (  # noqa: E402
     BoilerMaxPowerSelectEntity,
 )
 
@@ -137,7 +137,7 @@ class TestKospelBoilerMaxPowerSelectEntity:
         entity = KospelBoilerMaxPowerSelectEntity(mock_coordinator, mock_entry)
 
         with patch(
-            "custom_components.kospel.select.asyncio.sleep", new_callable=AsyncMock
+            "custom_components.kospel_ppe4_custom.select.asyncio.sleep", new_callable=AsyncMock
         ):
             await entity.async_select_option("6")
 

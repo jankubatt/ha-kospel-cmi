@@ -8,11 +8,11 @@ Discover Kospel C.MI devices on your network. No URL or device ID needed.
 
 ```bash
 # Scan common subnets (192.168.1.0/24, 192.168.0.0/24, 192.168.101.0/24, 10.0.0.0/24)
-kospel-discover
+kospel-custom-discover
 
 # Scan specific subnet(s)
-kospel-discover 192.168.101.0/24
-kospel-discover 192.168.1.0/24 10.0.0.0/24
+kospel-custom-discover 192.168.101.0/24
+kospel-custom-discover 192.168.1.0/24 10.0.0.0/24
 ```
 
 **Options:**
@@ -33,16 +33,16 @@ for recording sessions when changing settings via the manufacturer UI.
 
 ```bash
 # HTTP mode (requires heater on network)
-kospel-scan-live --url http://192.168.1.1/api/dev/65 0b00 256
+kospel-custom-scan-live --url http://192.168.1.1/api/dev/65 0b00 256
 
 # YAML mode (offline, uses state file)
-kospel-scan-live --yaml /path/to/state.yaml 0b00 256
+kospel-custom-scan-live --yaml /path/to/state.yaml 0b00 256
 
 # Append change events to file
-kospel-scan-live --url http://192.168.1.1/api/dev/65 -o live_session.yaml
+kospel-custom-scan-live --url http://192.168.1.1/api/dev/65 -o live_session.yaml
 
 # Custom poll interval (default: 2s)
-kospel-scan-live --url http://... --interval 1
+kospel-custom-scan-live --url http://... --interval 1
 ```
 
 **Options:**
@@ -84,16 +84,16 @@ human-readable or YAML format.
 
 ```bash
 # HTTP mode (requires heater on network)
-kospel-scan-registers --url http://192.168.1.1/api/dev/65 0b00 256
+kospel-custom-scan-registers --url http://192.168.1.1/api/dev/65 0b00 256
 
 # YAML mode (offline, uses state file)
-kospel-scan-registers --yaml /path/to/state.yaml 0b00 256
+kospel-custom-scan-registers --yaml /path/to/state.yaml 0b00 256
 
 # Write to file (YAML format for diffing)
-kospel-scan-registers --url http://192.168.1.1/api/dev/65 -o scan.yaml
+kospel-custom-scan-registers --url http://192.168.1.1/api/dev/65 -o scan.yaml
 
 # Include empty registers (hex 0000)
-kospel-scan-registers --url http://192.168.1.1/api/dev/65 --show-empty
+kospel-custom-scan-registers --url http://192.168.1.1/api/dev/65 --show-empty
 ```
 
 **Options:**
@@ -109,8 +109,8 @@ kospel-scan-registers --url http://192.168.1.1/api/dev/65 --show-empty
 ```python
 import asyncio
 import aiohttp
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
-from kospel_cmi.tools import scan_register_range, format_scan_result, serialize_scan_result
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.tools import scan_register_range, format_scan_result, serialize_scan_result
 
 async def main():
     async with aiohttp.ClientSession() as session:

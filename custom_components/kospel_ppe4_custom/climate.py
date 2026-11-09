@@ -18,9 +18,9 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from kospel_cmi import KospelError
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.registers.enums import HeaterMode, HeatingStatus
+from kospel_cmi_custom import KospelError
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.registers.enums import HeaterMode, HeatingStatus
 
 from .const import (
     DOMAIN,

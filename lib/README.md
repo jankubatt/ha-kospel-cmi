@@ -19,8 +19,8 @@ This library provides a Python client for controlling Kospel electric heaters (`
 - Heater mode control (OFF, SUMMER, WINTER, PARTY, VACATION, MANUAL)
 - CWU (water) mode and temperatures (economy, comfort)
 - Manual heating temperature
-- Device discovery (CLI `kospel-discover` + Python API)
-- Register scanner and live scanner tools (`kospel-scan-registers`, `kospel-scan-live`)
+- Device discovery (CLI `kospel-custom-discover` + Python API)
+- Register scanner and live scanner tools (`kospel-custom-scan-registers`, `kospel-custom-scan-live`)
 - YAML backend for offline testing (no hardware required)
 
 ## Installation
@@ -36,7 +36,7 @@ pip install kospel-cmi-lib
 ## Quick Start
 
 1. **Install**: `uv add kospel-cmi-lib` or `pip install kospel-cmi-lib`
-2. **Discover device**: Run `kospel-discover` or use `probe_device(session, "192.168.x.x")` to get `api_base_url`
+2. **Discover device**: Run `kospel-custom-discover` or use `probe_device(session, "192.168.x.x")` to get `api_base_url`
 3. **Connect and read**: Create `EkcoM3` with `HttpRegisterBackend(session, api_base_url)` and call `refresh()`
 
 ## Usage
@@ -50,9 +50,9 @@ async context manager to release the HTTP session when done.
 ```python
 import asyncio
 import aiohttp
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
-from kospel_cmi.registers.enums import HeaterMode
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.registers.enums import HeaterMode
 
 
 async def main() -> None:
@@ -93,15 +93,15 @@ await controller.refresh()
 **CLI** — scan network and list devices (no config needed):
 
 ```bash
-kospel-discover                    # Scans common subnets
-kospel-discover 192.168.101.0/24  # Scan specific subnet
+kospel-custom-discover                    # Scans common subnets
+kospel-custom-discover 192.168.101.0/24  # Scan specific subnet
 ```
 
 **Python API**:
 
 ```python
 import aiohttp
-from kospel_cmi import probe_device, discover_devices
+from kospel_cmi_custom import probe_device, discover_devices
 
 async with aiohttp.ClientSession() as session:
     info = await probe_device(session, "192.168.101.49")
@@ -118,9 +118,9 @@ async with aiohttp.ClientSession() as session:
 ```python
 import asyncio
 import aiohttp
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend
-from kospel_cmi.registers.enums import CwuMode, HeaterMode
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend
+from kospel_cmi_custom.registers.enums import CwuMode, HeaterMode
 
 async def main():
     async with aiohttp.ClientSession() as session:
@@ -148,7 +148,7 @@ asyncio.run(main())
 ```python
 import asyncio
 import aiohttp
-from kospel_cmi import Ppe4, HttpModbusBackend
+from kospel_cmi_custom import Ppe4, HttpModbusBackend
 
 async def main() -> None:
     async with aiohttp.ClientSession() as session:
@@ -171,10 +171,10 @@ asyncio.run(main())
 
 Module-specific documentation is co-located with the code (GitHub automatically displays these when browsing directories):
 
-- **[kospel/](src/kospel_cmi/kospel/README.md)** - HTTP API endpoints and protocol
-- **[registers/](src/kospel_cmi/registers/README.md)** - Register encoding, decoding, and mappings
-- **[controller/](src/kospel_cmi/controller/README.md)** - EkcoM3 device class
-- **[tools/](src/kospel_cmi/tools/README.md)** - Register scanner and live scanner for reverse-engineering
+- **[kospel/](src/kospel_cmi_custom/kospel/README.md)** - HTTP API endpoints and protocol
+- **[registers/](src/kospel_cmi_custom/registers/README.md)** - Register encoding, decoding, and mappings
+- **[controller/](src/kospel_cmi_custom/controller/README.md)** - EkcoM3 device class
+- **[tools/](src/kospel_cmi_custom/tools/README.md)** - Register scanner and live scanner for reverse-engineering
 
 ### Project Documentation
 
@@ -197,7 +197,7 @@ Module-specific documentation is co-located with the code (GitHub automatically 
 
 1. Local control - basic device functions can be operated using the library
 2. Robust interface - an interface for 3rd party tools (i.e., Home Assistant integration)
-3. Reverse-engineering toolset - `kospel-scan-registers` and `kospel-scan-live` for exploring registers
+3. Reverse-engineering toolset - `kospel-custom-scan-registers` and `kospel-custom-scan-live` for exploring registers
 
 ### `v2.0.0` Plug & Play for Kospel ecosystem
 

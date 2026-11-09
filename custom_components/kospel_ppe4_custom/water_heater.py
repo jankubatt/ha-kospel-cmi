@@ -15,8 +15,8 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from kospel_cmi import KospelError, WaterHeaterController
-from kospel_cmi.registers.enums import DhwMode, WaterHeaterEnabled
+from kospel_cmi_custom import KospelError, WaterHeaterController
+from kospel_cmi_custom.registers.enums import DhwMode, WaterHeaterEnabled
 
 from .const import (
     DOMAIN,

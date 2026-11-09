@@ -105,7 +105,7 @@ async def _main_async() -> int:
 
     if all_devices:
         print("Use the API URL with other tools, e.g.:")
-        print(f"  kospel-scan-registers --url {all_devices[0].api_base_url}")
+        print(f"  kospel-custom-scan-registers --url {all_devices[0].api_base_url}")
         return 0
     return 1
 

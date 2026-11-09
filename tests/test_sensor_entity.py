@@ -76,7 +76,7 @@ sys.modules["homeassistant.helpers.update_coordinator"].CoordinatorEntity = (
     _CoordinatorEntityBase
 )
 
-from custom_components.kospel.sensor import (
+from custom_components.kospel_ppe4_custom.sensor import (
     FlowSensor,
     HeatingModeSensor,
     LastDrawVolumeSensor,

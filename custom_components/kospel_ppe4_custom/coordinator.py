@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from kospel_cmi import (
+from kospel_cmi_custom import (
     IncompleteRegisterRefreshError,
     KospelConnectionError,
     KospelController,

@@ -3,7 +3,7 @@ requires = ["uv_build>=0.9.28"]
 build-backend = "uv_build"
 
 [project]
-name = "kospel-cmi-lib"
+name = "kospel-cmi-lib-custom"
 version = "2.1.0"
 description = "Python client for Kospel C.MI electric heater HTTP API"
 readme = "README.md"
@@ -33,12 +33,12 @@ keywords = ["kospel", "heater", "cmi", "home-assistant", "iot", "async"]
 urls = { Repository = "https://github.com/JanKrl/ha-kospel-cmi", Source = "https://github.com/JanKrl/ha-kospel-cmi/tree/master/lib" }
 
 [project.scripts]
-kospel-discover = "kospel_cmi.tools.discover:main"
-kospel-scan-registers = "kospel_cmi.tools.register_scanner:main"
-kospel-scan-live = "kospel_cmi.tools.live_scanner:main"
+kospel-custom-discover = "kospel_cmi_custom.tools.discover:main"
+kospel-custom-scan-registers = "kospel_cmi_custom.tools.register_scanner:main"
+kospel-custom-scan-live = "kospel_cmi_custom.tools.live_scanner:main"
 
 [tool.uv.build-backend]
-module-name = "kospel_cmi"
+module-name = "kospel_cmi_custom"
 module-root = "src"
 
 [tool.ruff]
@@ -60,7 +60,7 @@ quote-style = "double"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-# Add src to path so kospel_cmi is importable (tests mirror user imports)
+# Add src to path so kospel_cmi_custom is importable (tests mirror user imports)
 pythonpath = ["src"]
 
 [tool.coverage.run]

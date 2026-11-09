@@ -12,8 +12,8 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from kospel_cmi import KospelError, Ppe4
-from kospel_cmi.controller.device import EkcoM3
+from kospel_cmi_custom import KospelError, Ppe4
+from kospel_cmi_custom.controller.device import EkcoM3
 
 from .const import (
     DOMAIN,

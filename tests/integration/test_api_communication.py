@@ -5,10 +5,10 @@ from aioresponses import aioresponses
 
 import aiohttp
 
-from kospel_cmi import KospelConnectionError, RegisterValueInvalidError
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend
-from kospel_cmi.registers.enums import HeaterMode
+from kospel_cmi_custom import KospelConnectionError, RegisterValueInvalidError
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend
+from kospel_cmi_custom.registers.enums import HeaterMode
 
 
 def _get_request_count(m: object) -> int:

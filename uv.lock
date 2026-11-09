@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 [manifest]
 members = [
     "ha-kospel-cmi",
-    "kospel-cmi-lib",
+    "kospel-cmi-lib-custom",
 ]
 
 [[package]]
@@ -396,7 +396,7 @@ version = "1.5.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiohttp" },
-    { name = "kospel-cmi-lib" },
+    { name = "kospel-cmi-lib-custom" },
 ]
 
 [package.dev-dependencies]
@@ -415,7 +415,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.9.0" },
-    { name = "kospel-cmi-lib", editable = "lib" },
+    { name = "kospel-cmi-lib-custom", editable = "lib" },
 ]
 
 [package.metadata.requires-dev]
@@ -450,7 +450,7 @@ wheels = [
 ]
 
 [[package]]
-name = "kospel-cmi-lib"
+name = "kospel-cmi-lib-custom"
 version = "2.1.0"
 source = { editable = "lib" }
 dependencies = [

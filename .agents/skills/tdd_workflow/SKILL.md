@@ -11,7 +11,7 @@ When implementing a feature, especially one involving complex Home Assistant ent
 
 1. **Write Tests First**: Based on the approved `implementation_plan.md` or feature discussion, write the unit tests for the feature first. 
     - For the library (`lib/`), write tests that mock the HTTP responses and verify the parsed models.
-    - For the integration (`custom_components/kospel/`), write tests verifying the entity state and behavior.
+    - For the integration (`custom_components/kospel_ppe4_custom/`), write tests verifying the entity state and behavior.
 2. **Present Tests as Acceptance Criteria**: Stop and present the newly written tests to the user. Explain that these tests serve as the formal Acceptance Criteria.
 3. **Wait for Approval**: Do not write the actual implementation code until the PO agrees that the tests accurately reflect the desired behavior.
 4. **Implement**: Once approved, write the actual code to make the tests pass.

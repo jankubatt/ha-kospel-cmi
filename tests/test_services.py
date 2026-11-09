@@ -39,13 +39,13 @@ sys.modules["homeassistant.helpers.device_registry"] = MagicMock()
 sys.modules["homeassistant.helpers.entity"] = MagicMock()
 sys.modules["homeassistant.helpers.update_coordinator"] = MagicMock()
 
-from custom_components.kospel.services import (
+from custom_components.kospel_ppe4_custom.services import (
     async_setup_services,
     SERVICE_SET_PROGRAM,
     SERVICE_SET_WEEKDAY_SCHEDULE,
 )
-from custom_components.kospel.const import DOMAIN
-from kospel_cmi.registers.enums import ScheduleType
+from custom_components.kospel_ppe4_custom.const import DOMAIN
+from kospel_cmi_custom.registers.enums import ScheduleType
 
 HomeAssistantError = _FakeHomeAssistantError
 
@@ -88,8 +88,8 @@ async def test_set_program_service(hass):
     coordinator.async_request_refresh = AsyncMock()
     hass.data[DOMAIN]["test-entry-id"] = coordinator
 
-    with patch("custom_components.kospel.services.dr.async_get", return_value=device_registry), \
-         patch("custom_components.kospel.services.asyncio.sleep", new_callable=AsyncMock):
+    with patch("custom_components.kospel_ppe4_custom.services.dr.async_get", return_value=device_registry), \
+         patch("custom_components.kospel_ppe4_custom.services.asyncio.sleep", new_callable=AsyncMock):
         
         call = MagicMock()
         call.data = {
@@ -152,8 +152,8 @@ async def test_set_weekday_schedule_service(hass):
     coordinator.async_request_refresh = AsyncMock()
     hass.data[DOMAIN]["test-entry-id"] = coordinator
 
-    with patch("custom_components.kospel.services.dr.async_get", return_value=device_registry), \
-         patch("custom_components.kospel.services.asyncio.sleep", new_callable=AsyncMock):
+    with patch("custom_components.kospel_ppe4_custom.services.dr.async_get", return_value=device_registry), \
+         patch("custom_components.kospel_ppe4_custom.services.asyncio.sleep", new_callable=AsyncMock):
         
         call = MagicMock()
         call.data = {
@@ -196,8 +196,8 @@ async def test_get_program_service(hass):
     from unittest.mock import AsyncMock
     controller = MagicMock()
     
-    from kospel_cmi.controller.schedules import DailyProgram, ScheduleTimeSlot
-    from kospel_cmi.registers.enums import ScheduleType
+    from kospel_cmi_custom.controller.schedules import DailyProgram, ScheduleTimeSlot
+    from kospel_cmi_custom.registers.enums import ScheduleType
     
     mock_program = DailyProgram(slots=[
         ScheduleTimeSlot(start_minute=100, stop_minute=200, preset_id=1),
@@ -207,7 +207,7 @@ async def test_get_program_service(hass):
     coordinator.heater_controller = controller
     hass.data[DOMAIN]["test-entry-id"] = coordinator
 
-    with patch("custom_components.kospel.services.dr.async_get", return_value=device_registry):
+    with patch("custom_components.kospel_ppe4_custom.services.dr.async_get", return_value=device_registry):
         call = MagicMock()
         call.data = {
             "device_id": "test_device_id",
@@ -244,8 +244,8 @@ async def test_get_weekday_schedule_service(hass):
     from unittest.mock import AsyncMock
     controller = MagicMock()
     
-    from kospel_cmi.controller.schedules import WeekdaySchedule
-    from kospel_cmi.registers.enums import ScheduleType
+    from kospel_cmi_custom.controller.schedules import WeekdaySchedule
+    from kospel_cmi_custom.registers.enums import ScheduleType
     
     mock_schedule = WeekdaySchedule(
         monday=1, tuesday=2, wednesday=3, thursday=4, friday=5, saturday=6, sunday=7
@@ -254,7 +254,7 @@ async def test_get_weekday_schedule_service(hass):
     coordinator.heater_controller = controller
     hass.data[DOMAIN]["test-entry-id"] = coordinator
 
-    with patch("custom_components.kospel.services.dr.async_get", return_value=device_registry):
+    with patch("custom_components.kospel_ppe4_custom.services.dr.async_get", return_value=device_registry):
         call = MagicMock()
         call.data = {
             "device_id": "test_device_id",

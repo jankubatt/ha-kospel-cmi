@@ -2,8 +2,8 @@ import asyncio
 
 import aiohttp
 
-from kospel_cmi.kospel.api import read_registers
-from kospel_cmi.registers.utils import reg_to_int
+from kospel_cmi_custom.kospel.api import read_registers
+from kospel_cmi_custom.registers.utils import reg_to_int
 
 
 async def main():

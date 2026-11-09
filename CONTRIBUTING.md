@@ -7,7 +7,7 @@ This repository is a **monorepo** containing two packages:
 | Package | Path | Distributed via |
 |---------|------|-----------------|
 | `kospel-cmi-lib` | `lib/` | [PyPI](https://pypi.org/project/kospel-cmi-lib/) |
-| `ha-kospel-cmi` (HA integration) | root (`custom_components/kospel/`) | [HACS](https://hacs.xyz/) |
+| `ha-kospel-cmi` (HA integration) | root (`custom_components/kospel_ppe4_custom/`) | [HACS](https://hacs.xyz/) |
 
 ---
 
@@ -49,7 +49,7 @@ uv run ruff check .
 
 If you make changes to `lib/` (the library) and want to test them in a real Home Assistant instance **before** they are published to PyPI, do not merge to `master` yet. Instead, update your Home Assistant instance to pull the library directly from your development branch.
 
-1. Open `custom_components/kospel/manifest.json` on your Home Assistant instance.
+1. Open `custom_components/kospel_ppe4_custom/manifest.json` on your Home Assistant instance.
 2. Locate the `requirements` array.
 3. Change the `kospel-cmi-lib` entry to point to your branch using pip's git support. For example:
 
@@ -126,7 +126,7 @@ Using a scope in the PR title makes it immediately clear which package is affect
 | Scope | Meaning |
 |-------|---------|
 | `lib` | Change in `lib/` — affects `kospel-cmi-lib` |
-| `ha` | Change in HA integration — affects `custom_components/kospel/` |
+| `ha` | Change in HA integration — affects `custom_components/kospel_ppe4_custom/` |
 | *(none)* | Root-level change (CI, docs, monorepo config) — no release |
 
 Scopes are **optional** for the automation (release-please uses file paths to detect which package a commit affects), but strongly recommended for human readability.
@@ -209,7 +209,7 @@ You don't have to merge the Release PR after every single PR. Let it accumulate:
 Because `ha-kospel-cmi` depends on `kospel-cmi-lib` from PyPI, changes spanning both packages **must be released in two consecutive steps**:
 
 1. **Step 1 — Library PR**: Merge `feat(lib): ...` or `fix(lib): ...` to `master`. Merge the resulting `release-please` PR to publish the new library version to PyPI.
-2. **Step 2 — Integration PR**: Open a separate PR updating `custom_components/kospel/manifest.json` requirements to the newly published PyPI version.
+2. **Step 2 — Integration PR**: Open a separate PR updating `custom_components/kospel_ppe4_custom/manifest.json` requirements to the newly published PyPI version.
 
 > [!WARNING]
 > CI runs `Validate Manifest Requirements` (`hassfest`), which strictly validates that the version specified in `manifest.json` exists on PyPI. Updating `manifest.json` before the library package is published on PyPI will break master CI.
@@ -218,7 +218,7 @@ Because `ha-kospel-cmi` depends on `kospel-cmi-lib` from PyPI, changes spanning 
 
 ## Adding a New HA Entity
 
-1. Create a new entity module in `custom_components/kospel/` (e.g., `switch.py`).
+1. Create a new entity module in `custom_components/kospel_ppe4_custom/` (e.g., `switch.py`).
 2. Follow the entity pattern documented in [AGENTS.md](.agents/AGENTS.md#entity-patterns).
 3. Register the platform in `PLATFORMS` list in `__init__.py`.
 4. Add translation keys in `strings.json` and `translations/pl.json`.
@@ -228,7 +228,7 @@ Because `ha-kospel-cmi` depends on `kospel-cmi-lib` from PyPI, changes spanning 
 
 All device communication logic lives in the **library** (`lib/`), not the HA integration. To add a new device:
 
-1. Add device support in `lib/src/kospel_cmi/` (new controller class, registers, device model).
+1. Add device support in `lib/src/kospel_cmi_custom/` (new controller class, registers, device model).
 2. Add library tests in `lib/tests/`.
 3. Update the HA integration to expose new device-specific entities if needed.
 4. Use a `feat(lib): add support for <device>` PR title for a proper minor version bump.
@@ -243,7 +243,7 @@ Use the [GitHub issue templates](https://github.com/JanKrl/ha-kospel-cmi/issues/
 > GitHub issues can be created in either **Polish** or **English**.
 
 When reporting bugs, include:
-- Home Assistant logs from `custom_components.kospel`
+- Home Assistant logs from `custom_components.kospel_ppe4_custom`
 - Whether the bug is in the HA integration layer or the communication library
 - Device model and firmware version if relevant
 

@@ -8,7 +8,7 @@ from typing import Any
 
 import aiohttp
 import voluptuous as vol
-from kospel_cmi import discover_devices, probe_device, probe_modbus_device
+from kospel_cmi_custom import discover_devices, probe_device, probe_modbus_device
 
 from homeassistant import config_entries
 from homeassistant.components import network

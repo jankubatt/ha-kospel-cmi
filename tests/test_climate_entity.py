@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from kospel_cmi.registers.enums import HeaterMode, HeatingStatus
+from kospel_cmi_custom.registers.enums import HeaterMode, HeatingStatus
 
 # Mock homeassistant before importing integration modules.
 class _HAModule:
@@ -96,7 +96,7 @@ climate_mock.HVACAction = MagicMock()
 sys.modules["homeassistant.components.climate"] = climate_mock
 
 # Import after mocks
-from custom_components.kospel.climate import ClimateEntity
+from custom_components.kospel_ppe4_custom.climate import ClimateEntity
 
 KospelClimateEntity = ClimateEntity
 
@@ -245,7 +245,7 @@ class TestClimateSetTemperature:
         mock_coordinator.data = mock_controller
         climate_entity.async_write_ha_state = MagicMock()
 
-        with patch("custom_components.kospel.climate.asyncio.sleep", new_callable=AsyncMock):
+        with patch("custom_components.kospel_ppe4_custom.climate.asyncio.sleep", new_callable=AsyncMock):
             await climate_entity.async_set_temperature(temperature=25.0)
 
         mock_controller.set_manual_heating.assert_called_once_with(25.0)
@@ -266,7 +266,7 @@ class TestClimateSetHvacMode:
         mock_coordinator.data = mock_controller
         climate_entity.async_write_ha_state = MagicMock()
 
-        with patch("custom_components.kospel.climate.asyncio.sleep", new_callable=AsyncMock):
+        with patch("custom_components.kospel_ppe4_custom.climate.asyncio.sleep", new_callable=AsyncMock):
             await climate_entity.async_set_hvac_mode(HVACMode.OFF)
 
         mock_controller.set_heater_mode.assert_called_once_with(HeaterMode.OFF)
@@ -282,7 +282,7 @@ class TestClimateSetHvacMode:
         mock_coordinator.data = mock_controller
         climate_entity.async_write_ha_state = MagicMock()
 
-        with patch("custom_components.kospel.climate.asyncio.sleep", new_callable=AsyncMock):
+        with patch("custom_components.kospel_ppe4_custom.climate.asyncio.sleep", new_callable=AsyncMock):
             await climate_entity.async_set_hvac_mode(HVACMode.HEAT)
 
         mock_controller.set_heater_mode.assert_called_once_with(HeaterMode.MANUAL)
@@ -298,7 +298,7 @@ class TestClimateSetHvacMode:
         mock_coordinator.data = mock_controller
         climate_entity.async_write_ha_state = MagicMock()
 
-        with patch("custom_components.kospel.climate.asyncio.sleep", new_callable=AsyncMock):
+        with patch("custom_components.kospel_ppe4_custom.climate.asyncio.sleep", new_callable=AsyncMock):
             await climate_entity.async_set_hvac_mode(HVACMode.AUTO)
 
         mock_controller.set_heater_mode.assert_called_once_with(HeaterMode.WINTER)
@@ -331,7 +331,7 @@ class TestClimateSetPresetMode:
         mock_coordinator.data = mock_controller
         climate_entity.async_write_ha_state = MagicMock()
 
-        with patch("custom_components.kospel.climate.asyncio.sleep", new_callable=AsyncMock):
+        with patch("custom_components.kospel_ppe4_custom.climate.asyncio.sleep", new_callable=AsyncMock):
             await climate_entity.async_set_preset_mode(HeaterMode.SUMMER.value)
 
         mock_controller.set_heater_mode.assert_called_once_with(HeaterMode.SUMMER)

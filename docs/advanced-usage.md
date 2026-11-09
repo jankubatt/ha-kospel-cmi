@@ -17,7 +17,7 @@ This page is for users who want deeper control, better diagnostics, or developme
 
 - No heater required.
 - Stores register state in local file:
-  - `custom_components/kospel/data/state.yaml`
+  - `custom_components/kospel_ppe4_custom/data/state.yaml`
 - Intended for development/testing only.
 
 ## Entity Behavior Details
@@ -65,7 +65,7 @@ You can set post-write refresh delay in integration options:
 
 ## Troubleshooting and Diagnostics
 
-- Main integration logger: `custom_components.kospel`
+- Main integration logger: `custom_components.kospel_ppe4_custom`
 - For setup issues:
   - verify heater IP is reachable from Home Assistant host,
   - verify correct device ID,

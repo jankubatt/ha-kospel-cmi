@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 import aiohttp
-from kospel_cmi import (
+from kospel_cmi_custom import (
     EkcoM3,
     HttpCmiBackend,
     HttpModbusBackend,

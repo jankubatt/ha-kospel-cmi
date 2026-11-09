@@ -7,15 +7,15 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.exceptions import HomeAssistantError
 
-from kospel_cmi.controller.schedules import (
+from kospel_cmi_custom.controller.schedules import (
     DailyProgram,
     ScheduleTimeSlot,
     WeekdaySchedule,
     validate_program,
     ScheduleValidationError,
 )
-from kospel_cmi.registers.enums import ScheduleType
-from kospel_cmi import KospelError
+from kospel_cmi_custom.registers.enums import ScheduleType
+from kospel_cmi_custom import KospelError
 
 from .const import DOMAIN, get_refresh_delay_after_set
 

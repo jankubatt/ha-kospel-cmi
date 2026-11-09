@@ -31,7 +31,7 @@ Relevant logs from Home Assistant. Enable debug logging by adding this to `confi
 ```yaml
 logger:
   logs:
-    custom_components.kospel: debug
+    custom_components.kospel_ppe4_custom: debug
 ```
 
 **Screenshots**

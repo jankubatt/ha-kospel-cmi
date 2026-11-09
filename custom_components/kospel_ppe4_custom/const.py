@@ -10,7 +10,7 @@ from homeassistant.helpers.entity import DeviceInfo
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
 
-DOMAIN = "kospel"
+DOMAIN = "kospel_ppe4_custom"
 
 # Configuration keys
 CONF_BACKEND_TYPE = "backend_type"

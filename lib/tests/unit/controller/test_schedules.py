@@ -1,13 +1,13 @@
 import pytest
 
-from kospel_cmi.controller.schedules import (
+from kospel_cmi_custom.controller.schedules import (
     DailyProgram,
     ScheduleTimeSlot,
     ScheduleValidationError,
     WeekdaySchedule,
     validate_program,
 )
-from kospel_cmi.registers.enums import ChPreset
+from kospel_cmi_custom.registers.enums import ChPreset
 
 
 def test_schedule_time_slot():

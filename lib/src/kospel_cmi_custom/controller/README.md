@@ -6,8 +6,8 @@ All settings and sensors are explicit properties; writes happen immediately (no 
 ## Usage
 
 ```python
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import HttpRegisterBackend, YamlRegisterBackend
 
 # Create device with backend (optional strict_refresh=True for atomic snapshots)
 backend = HttpRegisterBackend(session, api_base_url)

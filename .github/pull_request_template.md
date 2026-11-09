@@ -11,7 +11,7 @@
 <!-- As a PO, how can I manually test this in Home Assistant or using the CLI? Provide clear steps. -->
 
 ## ✅ Release Checklist
-- [ ] **Package boundary respected**: Changes are isolated to ONLY `lib/` OR `custom_components/kospel/` (never both).
+- [ ] **Package boundary respected**: Changes are isolated to ONLY `lib/` OR `custom_components/kospel_ppe4_custom/` (never both).
 - [ ] **Documentation**: `README.md` (and `lib/README.md` if applicable) is updated to reflect new features/changes.
 - [ ] **Translation keys**: Added to `strings.json` and `translations/pl.json` (if new entities/UI strings).
 - [ ] **Tests pass**: Automated tests pass (`uv run python -m pytest tests/ -v`).

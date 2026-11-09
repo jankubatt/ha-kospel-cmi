@@ -1,6 +1,6 @@
 """Shared test fixtures for tools tests."""
 
-from kospel_cmi.registers.utils import int_to_reg_address, reg_address_to_int
+from kospel_cmi_custom.registers.utils import int_to_reg_address, reg_address_to_int
 
 
 class MockRegisterBackend:

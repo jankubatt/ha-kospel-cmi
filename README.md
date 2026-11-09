@@ -1,7 +1,7 @@
 # Kospel Electric Heaters for Home Assistant
 
 <p align="center">
-  <img src="custom_components/kospel/brand/icon.png" alt="Kospel K-CMI" width="160" height="160">
+  <img src="custom_components/kospel_ppe4_custom/brand/icon.png" alt="Kospel K-CMI" width="160" height="160">
 </p>
 
 Control and monitor compatible Kospel electric heaters and instantaneous water heaters from Home Assistant using local network communication.
@@ -12,6 +12,14 @@ Control and monitor compatible Kospel electric heaters and instantaneous water h
 > [!WARNING]
 > This is an unofficial, community-maintained integration and is not affiliated with or endorsed by Kospel.
 > Use it at your own responsibility.
+
+> [!NOTE]
+> **Custom fork.** This copy is built to run next to the original integration:
+> domain `kospel_ppe4_custom`, library package `kospel_cmi_custom` (distribution
+> `kospel-cmi-lib-custom`) and console scripts `kospel-custom-discover`,
+> `kospel-custom-scan-registers` and `kospel-custom-scan-live`. The rest of this
+> document comes from the original project and may still mention its names, for
+> example the `kospel` domain or the PyPI package.
 
 ## Supported Devices
 
@@ -123,7 +131,7 @@ When adding the integration in Home Assistant:
 ## Troubleshooting
 
 - If setup fails, verify heater IP/device ID and confirm Home Assistant can reach the heater on your LAN.
-- If entities are unavailable, check Home Assistant logs for `custom_components.kospel` messages.
+- If entities are unavailable, check Home Assistant logs for `custom_components.kospel_ppe4_custom` messages.
 - For discovery issues, use the manual setup path.
 - If behavior looks wrong, open an issue with logs and your setup details.
 

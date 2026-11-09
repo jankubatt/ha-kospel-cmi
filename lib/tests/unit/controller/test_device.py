@@ -2,13 +2,13 @@
 
 import pytest
 
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.exceptions import (
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.exceptions import (
     IncompleteRegisterRefreshError,
     KospelWriteError,
     RegisterMissingError,
 )
-from kospel_cmi.registers.enums import (
+from kospel_cmi_custom.registers.enums import (
     DhwMode,
     HeaterMode,
     HeatingStatus,
@@ -26,7 +26,7 @@ class MockRegisterBackend:
         return self.registers.get(register, "0000")
 
     async def read_registers(self, start_register: str, count: int) -> dict[str, str]:
-        from kospel_cmi.registers.utils import reg_address_to_int
+        from kospel_cmi_custom.registers.utils import reg_address_to_int
 
         result: dict[str, str] = {}
         start_int = reg_address_to_int(start_register)
@@ -457,7 +457,7 @@ class TestEkcoM3:
             "0c29": "ffff",
             "0c2a": "ffff",
         }
-        from kospel_cmi.registers.enums import ChPreset, ScheduleType
+        from kospel_cmi_custom.registers.enums import ChPreset, ScheduleType
         backend = MockRegisterBackend(mock_regs)
         controller = EkcoM3(backend=backend)
         program = await controller.get_program(ScheduleType.CH, 1)
@@ -470,8 +470,8 @@ class TestEkcoM3:
     @pytest.mark.asyncio
     async def test_set_program_writes_to_backend(self) -> None:
         """set_program encodes a DailyProgram and writes 15 registers."""
-        from kospel_cmi.controller.schedules import DailyProgram, ScheduleTimeSlot
-        from kospel_cmi.registers.enums import ChPreset, ScheduleType
+        from kospel_cmi_custom.controller.schedules import DailyProgram, ScheduleTimeSlot
+        from kospel_cmi_custom.registers.enums import ChPreset, ScheduleType
         backend = MockRegisterBackend()
         controller = EkcoM3(backend=backend)
 
@@ -499,7 +499,7 @@ class TestEkcoM3:
             "0c99": "0600", # Sat = 6
             "0c9a": "0700", # Sun = 7
         }
-        from kospel_cmi.registers.enums import ScheduleType
+        from kospel_cmi_custom.registers.enums import ScheduleType
         backend = MockRegisterBackend(mock_regs)
         controller = EkcoM3(backend=backend)
         schedule = await controller.get_weekday_schedule(ScheduleType.CH)
@@ -509,8 +509,8 @@ class TestEkcoM3:
     @pytest.mark.asyncio
     async def test_set_weekday_schedule_writes_to_backend(self) -> None:
         """set_weekday_schedule encodes a WeekdaySchedule and writes 7 registers."""
-        from kospel_cmi.controller.schedules import WeekdaySchedule
-        from kospel_cmi.registers.enums import ScheduleType
+        from kospel_cmi_custom.controller.schedules import WeekdaySchedule
+        from kospel_cmi_custom.registers.enums import ScheduleType
         backend = MockRegisterBackend()
         controller = EkcoM3(backend=backend)
 

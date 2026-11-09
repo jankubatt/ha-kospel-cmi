@@ -4,13 +4,13 @@ import aiohttp
 import aioresponses
 import pytest
 
-from kospel_cmi.exceptions import (
+from kospel_cmi_custom.exceptions import (
     KospelConnectionError,
     KospelWriteError,
     RegisterMissingError,
     RegisterValueInvalidError,
 )
-from kospel_cmi.kospel.api import read_register, read_registers, write_register
+from kospel_cmi_custom.kospel.api import read_register, read_registers, write_register
 
 BASE = "http://192.168.101.49/api/dev/65"
 

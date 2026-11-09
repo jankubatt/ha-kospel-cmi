@@ -74,7 +74,7 @@ def _device_info(**kwargs):
 
 sys.modules["homeassistant.helpers.entity"].DeviceInfo = _device_info
 
-from custom_components.kospel.const import (
+from custom_components.kospel_ppe4_custom.const import (
     CONF_DEVICE_ID,
     CONF_DEVICE_TYPE,
     CONF_REFRESH_DELAY_AFTER_SET,
@@ -88,7 +88,7 @@ from custom_components.kospel.const import (
     get_yaml_state_file_path,
     make_unique_id,
 )
-from custom_components.kospel.config_flow import (
+from custom_components.kospel_ppe4_custom.config_flow import (
     CannotConnect,
     KospelConfigFlowHandler,
     KospelOptionsFlowHandler,
@@ -149,7 +149,7 @@ class TestGetDeviceInfo:
         entry.data = {CONF_SERIAL_NUMBER: "mi01_001", CONF_DEVICE_ID: 65}
         entry.entry_id = "abc"
         info = get_device_info(entry)
-        assert ("kospel", "mi01_001_65") in info["identifiers"]
+        assert ("kospel_ppe4_custom", "mi01_001_65") in info["identifiers"]
 
     def test_identifiers_use_entry_id_for_legacy(self) -> None:
         """DeviceInfo.identifiers uses entry_id for legacy entries."""
@@ -157,7 +157,7 @@ class TestGetDeviceInfo:
         entry.data = {}
         entry.entry_id = "legacy-uuid"
         info = get_device_info(entry)
-        assert ("kospel", "legacy-uuid") in info["identifiers"]
+        assert ("kospel_ppe4_custom", "legacy-uuid") in info["identifiers"]
 
     def test_model_reflects_device_type(self, tmp_path) -> None:
         """get_device_info and get_yaml_state_file_path reflect device_type."""
@@ -185,7 +185,7 @@ class TestValidateHttpInput:
         mock_info.serial_number = "mi01_00006047"
 
         with patch(
-            "custom_components.kospel.config_flow.probe_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_device",
             new_callable=AsyncMock,
             return_value=mock_info,
         ):
@@ -200,7 +200,7 @@ class TestValidateHttpInput:
     async def test_raises_cannot_connect_when_probe_returns_none(self) -> None:
         """validate_http_input raises CannotConnect when probe returns None."""
         with patch(
-            "custom_components.kospel.config_flow.probe_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_device",
             new_callable=AsyncMock,
             return_value=None,
         ):
@@ -220,7 +220,7 @@ class TestValidateHttpInput:
         mock_info.serial_number = "mi01_001"
 
         with patch(
-            "custom_components.kospel.config_flow.probe_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_device",
             new_callable=AsyncMock,
             return_value=mock_info,
         ):
@@ -239,7 +239,7 @@ class TestGetSubnetsToScan:
         """_get_subnets_to_scan returns empty when network raises."""
         hass = MagicMock()
         with patch(
-            "custom_components.kospel.config_flow.network.async_get_adapters",
+            "custom_components.kospel_ppe4_custom.config_flow.network.async_get_adapters",
             new_callable=AsyncMock,
             side_effect=Exception("Network not loaded"),
         ):
@@ -259,7 +259,7 @@ class TestGetSubnetsToScan:
             },
         ]
         with patch(
-            "custom_components.kospel.config_flow.network.async_get_adapters",
+            "custom_components.kospel_ppe4_custom.config_flow.network.async_get_adapters",
             new_callable=AsyncMock,
             return_value=adapters,
         ):
@@ -274,7 +274,7 @@ class TestGetSubnetsToScan:
             {"enabled": False, "ipv4": [{"address": "10.0.0.1", "network_prefix": 24}]},
         ]
         with patch(
-            "custom_components.kospel.config_flow.network.async_get_adapters",
+            "custom_components.kospel_ppe4_custom.config_flow.network.async_get_adapters",
             new_callable=AsyncMock,
             return_value=adapters,
         ):
@@ -287,7 +287,7 @@ class TestGetSubnetsToScan:
         hass = MagicMock()
         adapters = [{"enabled": True, "ipv4": []}]
         with patch(
-            "custom_components.kospel.config_flow.network.async_get_adapters",
+            "custom_components.kospel_ppe4_custom.config_flow.network.async_get_adapters",
             new_callable=AsyncMock,
             return_value=adapters,
         ):
@@ -330,7 +330,7 @@ class TestDiscoverByKospelMac:
         discovered.device_ids = [65, 66]
 
         with patch(
-            "custom_components.kospel.config_flow.probe_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_device",
             new_callable=AsyncMock,
             return_value=discovered,
         ) as mock_probe:
@@ -358,7 +358,7 @@ class TestConfigFlowDiscoveryFallback:
         found.device_ids = [65]
 
         with patch(
-            "custom_components.kospel.config_flow._discover_by_network_scan",
+            "custom_components.kospel_ppe4_custom.config_flow._discover_by_network_scan",
             new_callable=AsyncMock,
             return_value=[(found, 65)],
         ) as mock_discover:
@@ -416,7 +416,7 @@ class TestConfigFlowDiscoveryFallback:
         found.device_ids = [65]
 
         with patch(
-            "custom_components.kospel.config_flow._discover_by_kospel_mac",
+            "custom_components.kospel_ppe4_custom.config_flow._discover_by_kospel_mac",
             new_callable=AsyncMock,
             return_value=[(found, 65)],
         ) as mock_auto:
@@ -456,7 +456,7 @@ class TestDhcpDiscoveryStep:
         handler._abort_if_unique_id_configured = MagicMock()
 
         with patch(
-            "custom_components.kospel.config_flow.probe_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_device",
             new_callable=AsyncMock,
             return_value=info,
         ):
@@ -475,7 +475,7 @@ class TestDiscoverByNetworkScan:
     async def test_returns_empty_without_subnets(self) -> None:
         """_discover_by_network_scan returns empty when no adapter subnets exist."""
         with patch(
-            "custom_components.kospel.config_flow._get_subnets_to_scan",
+            "custom_components.kospel_ppe4_custom.config_flow._get_subnets_to_scan",
             new_callable=AsyncMock,
             return_value=[],
         ):
@@ -488,11 +488,11 @@ class TestDiscoverByNetworkScan:
         info = MagicMock()
         info.device_ids = [65, 66]
         with patch(
-            "custom_components.kospel.config_flow._get_subnets_to_scan",
+            "custom_components.kospel_ppe4_custom.config_flow._get_subnets_to_scan",
             new_callable=AsyncMock,
             return_value=["192.168.1.0/24", "10.0.0.0/24"],
         ), patch(
-            "custom_components.kospel.config_flow.discover_devices",
+            "custom_components.kospel_ppe4_custom.config_flow.discover_devices",
             new_callable=AsyncMock,
             side_effect=[[info], []],
         ) as mock_discover:
@@ -669,7 +669,7 @@ class TestManualAndYamlMultiDeviceFlow:
         info.backend_family = "modbus"
 
         with patch(
-            "custom_components.kospel.config_flow.probe_modbus_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_modbus_device",
             new_callable=AsyncMock,
             return_value=info,
         ):
@@ -695,7 +695,7 @@ class TestManualAndYamlMultiDeviceFlow:
         info.backend_family = "modbus"
 
         with patch(
-            "custom_components.kospel.config_flow.probe_modbus_device",
+            "custom_components.kospel_ppe4_custom.config_flow.probe_modbus_device",
             new_callable=AsyncMock,
             return_value=info,
         ):

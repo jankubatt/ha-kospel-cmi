@@ -1,0 +1,20 @@
+{
+  "domain": "kospel_ppe4_custom",
+  "name": "Kospel PPE.4 (custom)",
+  "codeowners": [
+    "@JanKrl"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "network"
+  ],
+  "documentation": "https://github.com/jankubatt/ha-kospel-cmi",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/jankubatt/ha-kospel-cmi/issues",
+  "requirements": [
+    "kospel-cmi-lib-custom @ git+https://github.com/jankubatt/ha-kospel-cmi.git@ppe4-custom#subdirectory=lib"
+  ],
+  "version": "1.5.0"
+}

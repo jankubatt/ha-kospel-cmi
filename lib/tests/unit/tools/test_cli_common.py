@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from kospel_cmi.tools.cli_common import backend_context
+from kospel_cmi_custom.tools.cli_common import backend_context
 
 
 @pytest.fixture

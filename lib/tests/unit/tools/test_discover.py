@@ -1,8 +1,8 @@
-"""Unit tests for kospel-discover CLI."""
+"""Unit tests for kospel-custom-discover CLI."""
 
 
-from kospel_cmi.kospel.discovery import DeviceDetail, KospelDeviceInfo
-from kospel_cmi.tools.discover import _format_devices
+from kospel_cmi_custom.kospel.discovery import DeviceDetail, KospelDeviceInfo
+from kospel_cmi_custom.tools.discover import _format_devices
 
 
 class TestFormatDevices:

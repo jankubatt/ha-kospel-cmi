@@ -3,9 +3,9 @@
 import pytest
 import yaml
 
-from kospel_cmi.controller.device import EkcoM3
-from kospel_cmi.kospel.backend import YamlRegisterBackend
-from kospel_cmi.registers.enums import HeaterMode
+from kospel_cmi_custom.controller.device import EkcoM3
+from kospel_cmi_custom.kospel.backend import YamlRegisterBackend
+from kospel_cmi_custom.registers.enums import HeaterMode
 
 
 def _controller_for_state_file(state_file: str) -> EkcoM3:

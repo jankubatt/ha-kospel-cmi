@@ -19,7 +19,7 @@
       "extra-files": [
         {
           "type": "json",
-          "path": "custom_components/kospel/manifest.json",
+          "path": "custom_components/kospel_ppe4_custom/manifest.json",
           "jsonpath": "$.version"
         }
       ]

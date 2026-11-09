@@ -5,8 +5,8 @@ from pathlib import Path
 import aiohttp
 import pytest
 
-from kospel_cmi.exceptions import RegisterMissingError
-from kospel_cmi.kospel.backend import (
+from kospel_cmi_custom.exceptions import RegisterMissingError
+from kospel_cmi_custom.kospel.backend import (
     CmiBackend,
     HttpCmiBackend,
     HttpModbusBackend,
