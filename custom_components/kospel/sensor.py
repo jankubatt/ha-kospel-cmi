@@ -63,6 +63,12 @@ async def async_setup_entry(
                     entity_category=EntityCategory.DIAGNOSTIC,
                 ),
                 FlowSensor(coordinator, entry),
+                FlowSensor(
+                    coordinator,
+                    entry,
+                    unique_id_suffix="flow_measured",
+                    attr_name="measured_flow",
+                ),
                 PowerSensor(coordinator, entry),
                 MaxPowerLimitSensor(coordinator, entry),
                 MaxPowerLimitSensor(
@@ -92,6 +98,7 @@ async def async_setup_entry(
                     unit=UnitOfVolume.LITERS,
                     precision=1,
                 ),
+                LastDrawVolumeSensor(coordinator, entry),
             ]
         )
         async_add_entities(entities)
@@ -228,7 +235,13 @@ class PressureSensor(SensorBaseEntity):
 
 
 class FlowSensor(SensorBaseEntity):
-    """Representation of a Kospel flow rate sensor."""
+    """Representation of a Kospel flow rate sensor.
+
+    By default it shows the flow the heater reports. On PPE.4 that value drops to
+    0 as soon as the flow is below the heater's minimum and heating stops, so a
+    second instance reads ``measured_flow``, derived from the draw volume
+    counter, which keeps reporting the real flow.
+    """
 
     _attr_device_class = SensorDeviceClass.VOLUME_FLOW_RATE
     _attr_native_unit_of_measurement = UnitOfVolumeFlowRate.LITERS_PER_MINUTE
@@ -238,14 +251,17 @@ class FlowSensor(SensorBaseEntity):
         self,
         coordinator: KospelDataUpdateCoordinator,
         entry: ConfigEntry,
+        unique_id_suffix: str = "flow",
+        attr_name: str = "flow",
     ) -> None:
         """Initialize the flow rate sensor."""
-        super().__init__(coordinator, entry, "flow", "flow")
+        super().__init__(coordinator, entry, unique_id_suffix, unique_id_suffix)
+        self._attr_name_prop = attr_name
 
     @property
     def native_value(self) -> float | None:
         """Return the flow rate in L/min."""
-        return getattr(self.coordinator.data, "flow", None)
+        return getattr(self.coordinator.data, self._attr_name_prop, None)
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
@@ -343,6 +359,31 @@ class TotalIncreasingSensor(SensorBaseEntity):
     def native_value(self) -> float | None:
         """Return the counter value from the controller."""
         return getattr(self.coordinator.data, self._attr_name_prop, None)
+
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self.async_write_ha_state()
+
+
+class LastDrawVolumeSensor(SensorBaseEntity):
+    """Total volume of the last finished hot water draw (PPE.4)."""
+
+    _attr_device_class = SensorDeviceClass.WATER
+    _attr_native_unit_of_measurement = UnitOfVolume.LITERS
+    _attr_suggested_display_precision = 1
+
+    def __init__(
+        self,
+        coordinator: KospelDataUpdateCoordinator,
+        entry: ConfigEntry,
+    ) -> None:
+        """Initialize the last draw volume sensor."""
+        super().__init__(coordinator, entry, "last_draw_volume", "last_draw_volume")
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the last draw volume in litres."""
+        return getattr(self.coordinator.data, "last_draw_volume_liters", None)
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""

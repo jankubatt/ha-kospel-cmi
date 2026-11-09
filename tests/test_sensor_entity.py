@@ -79,6 +79,7 @@ sys.modules["homeassistant.helpers.update_coordinator"].CoordinatorEntity = (
 from custom_components.kospel.sensor import (
     FlowSensor,
     HeatingModeSensor,
+    LastDrawVolumeSensor,
     MaxPowerLimitSensor,
     TemperatureSensor,
     TotalIncreasingSensor,
@@ -433,3 +434,75 @@ class TestTotalIncreasingSensor:
 
         assert energy_sensor.native_value == 3.45
         assert water_sensor.native_value == 85.7
+
+
+class TestActualFlowAndLastDrawVolumeSensors:
+    """Tests for the PPE.4 measured flow and last draw volume sensors."""
+
+    @staticmethod
+    def _measured_flow_sensor(coordinator, entry) -> FlowSensor:
+        return FlowSensor(
+            coordinator,
+            entry,
+            unique_id_suffix="flow_measured",
+            attr_name="measured_flow",
+        )
+
+    def test_measured_flow_reads_measured_flow_not_reported_flow(
+        self, mock_coordinator, mock_entry
+    ) -> None:
+        """Heater-reported flow is 0 below the limit; measured flow keeps going."""
+        mock_controller = MagicMock()
+        mock_controller.flow = 0.0
+        mock_controller.measured_flow = 1.2
+        mock_coordinator.data = mock_controller
+
+        reported = KospelFlowSensor(mock_coordinator, mock_entry)
+        measured = self._measured_flow_sensor(mock_coordinator, mock_entry)
+
+        assert reported.native_value == 0.0
+        assert measured.native_value == 1.2
+
+    def test_measured_flow_none_when_unknown(
+        self, mock_coordinator, mock_entry
+    ) -> None:
+        mock_controller = MagicMock()
+        mock_controller.measured_flow = None
+        mock_coordinator.data = mock_controller
+
+        entity = self._measured_flow_sensor(mock_coordinator, mock_entry)
+        assert entity.native_value is None
+
+    def test_measured_flow_has_own_unique_id_and_translation_key(
+        self, mock_coordinator, mock_entry
+    ) -> None:
+        reported = KospelFlowSensor(mock_coordinator, mock_entry)
+        measured = self._measured_flow_sensor(mock_coordinator, mock_entry)
+
+        assert reported._attr_translation_key == "flow"
+        assert measured._attr_translation_key == "flow_measured"
+        assert measured._attr_unique_id.endswith("_flow_measured")
+        assert measured._attr_unique_id != reported._attr_unique_id
+
+    def test_last_draw_volume_reads_controller_value(
+        self, mock_coordinator, mock_entry
+    ) -> None:
+        mock_controller = MagicMock()
+        mock_controller.last_draw_volume_liters = 8.866
+        mock_coordinator.data = mock_controller
+
+        entity = LastDrawVolumeSensor(mock_coordinator, mock_entry)
+
+        assert entity.native_value == 8.866
+        assert entity._attr_translation_key == "last_draw_volume"
+        assert entity._attr_unique_id.endswith("_last_draw_volume")
+
+    def test_last_draw_volume_none_when_missing(
+        self, mock_coordinator, mock_entry
+    ) -> None:
+        mock_controller = MagicMock()
+        mock_controller.last_draw_volume_liters = None
+        mock_coordinator.data = mock_controller
+
+        entity = LastDrawVolumeSensor(mock_coordinator, mock_entry)
+        assert entity.native_value is None

@@ -221,6 +221,9 @@
     "binary_sensor": {
       "connectivity": {
         "name": "Łączność"
+      },
+      "insufficient_flow": {
+        "name": "Niewystarczający przepływ"
       }
     },
     "sensor": {
@@ -256,6 +259,9 @@
       },
       "flow": {
         "name": "Przepływ"
+      },
+      "flow_measured": {
+        "name": "Rzeczywisty przepływ"
       },
       "power": {
         "name": "Moc chwilowa"
@@ -294,6 +300,9 @@
       },
       "water_today": {
         "name": "Zużycie wody dzisiaj"
+      },
+      "last_draw_volume": {
+        "name": "Objętość ostatniego poboru"
       },
       "heating_mode": {
         "name": "Tryb ogrzewania",

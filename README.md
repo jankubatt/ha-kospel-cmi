@@ -50,10 +50,12 @@ Entity IDs below are representative examples and can vary based on your device n
 - **System & Consumption Sensors**:
   - System pressure (`EKCO.M3`)
   - Water flow rate (`EKCO.M3`, `PPE.4`)
+  - Actual water flow rate (`PPE.4`): derived from the heater's draw volume counter, so it keeps reporting while the heater has stopped heating because the flow is below its minimum (the reported flow drops to 0 then)
   - Instantaneous power consumption (`EKCO.M3`, `PPE.4`)
   - Max power limit (`EKCO.M3`, `PPE.4`) and installed power (`PPE.4`)
   - Daily energy consumption in kWh (`PPE.4`, Energy Dashboard compatible)
   - Daily water consumption in L (`PPE.4`, Energy Dashboard compatible)
+  - Last draw volume in L (`PPE.4`)
   - Valve position CH / DHW (`EKCO.M3`)
   - Heating mode CH / DHW (`EKCO.M3`)
 
@@ -61,6 +63,8 @@ Entity IDs below are representative examples and can vary based on your device n
 
 - **Connectivity Sensor**:
   - Connectivity (`EKCO.M3`, `PPE.4`)
+- **Flow Sensor**:
+  - Insufficient flow (`PPE.4`): on while heating is stopped because the water flow is below the heater's minimum, the same condition the heater's LCD shows as insufficient flow
 
 ### Number (Configuration)
 
